@@ -1,5 +1,8 @@
 # ShopStream: App Service Builder + Azure Database for PostgreSQL
 
+Fork the [canonical sample](https://github.com/AzureAppService/app-service-builder-postgresql) into your GitHub account.
+This integration is not in the Portal template gallery; create an app from your fork and follow the resource setup below.
+
 ShopStream is a React marketplace and operations dashboard backed by Express,
 `pg`, and a separately provisioned **Azure Database for PostgreSQL Flexible
 Server**. Explore products, vendors, orders, reviews, and analytics. All SQL
