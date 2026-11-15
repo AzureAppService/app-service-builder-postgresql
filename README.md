@@ -263,7 +263,7 @@ work-account sign-in. In **App details**, select the same intended subscription,
 your approved sample resource group, and **West US 2** for the app. Review these
 choices before **Create and deploy**. Record the app's resource ID.
 Creating the app requests an initial deployment; it cannot pass the sample's
-SQL health check until the variables and principal grants below are in place.
+SQL health check until the connection mappings and principal grants below are in place.
 An initial missing-configuration/readiness failure is not a successful serving
 deployment. Configure and redeploy this same app; do not create a duplicate.
 
@@ -454,13 +454,22 @@ bootstrap scripts, or a privileged build-time connection. There is no static
 `output`, legacy `dependencies`, automatic database migration, or
 `startCommand` field. Never set reserved `PORT` in Builder Variables.
 
-Set these runtime variables:
+On **Connections**, add **PostgreSQL**, choose the provisioned flexible server
+and the app's system-assigned **Managed identity**, then export `PGHOST`,
+`PGDATABASE=shopstream`, `PGUSER=shopstream_runtime` and optional `PGPORT=5432`.
+Remove the optional `sslMode` mapping entirely: this sample enforces certificate
+validation in code and rejects `PGSSLMODE`, `PGPASSWORD` and `DATABASE_URL`.
+When migrating, remove the old manual `PGHOST`/`PGDATABASE`/`PGUSER`/`PGPORT`
+variables without deploying, then save the complete connection.
+[connection.json](connection.json) supplies that complete object; replace its
+resource/host placeholders. The general profile's **Password** alternative is
+not supported by this Entra-only sample; do not weaken its TLS or auth checks.
+Connections does not create the SQL principal or apply the grants above.
+
+Keep only the separate runtime controls in **Variables**:
 
 | Variable | Value |
 | --- | --- |
-| `PGHOST` | The provisioned server FQDN |
-| `PGDATABASE` | `shopstream` |
-| `PGUSER` | `shopstream_runtime`, mapped to the actual runtime identity |
 | `ENTRA_CREDENTIAL` | `managed-identity` (also the default) |
 | `AZURE_CLIENT_ID` | Unset for system-assigned; client ID for user-assigned |
 | `SHOPSTREAM_ENABLE_DEMO_WRITES` | Unset/false initially; true only for a bounded trusted demo |
@@ -478,7 +487,7 @@ For tester-only validation, enforce Builder's required Entra visitor policy
 before enabling writes. Review any sign-in or application-consent prompt
 personally; database managed identity does not replace visitor access control.
 
-Use the app's **Variables** page, then choose **Save and deploy** to capture variables in a new version. **Save only**
+Save both Connections and the separate variables, then deploy the complete desired configuration once. **Save only**
 does not update running code. Retained versions use historical settings. Wait
 for successful deployment and inspect the active version's exact GitHub source
 revision. Open **Overview → Browse**, sign in as an allowed tester, and check
@@ -489,6 +498,10 @@ request is denied with 401. A protected health endpoint returning 401 to an
 anonymous client is not a database failure; check it in the authenticated
 browser instead. Do not export session cookies or redeploy merely to finish
 sign-in.
+For CLI availability and an ETag-guarded ARM write of the same connection
+object, follow the [Connections guide](https://builder.appservice.azure.com/docs/guides/connect-to-services/).
+Installed CLI 0.0.2 has no Connections command; verify installed help before
+using the newer source command.
 
 For a separately approved bounded mutation test, set
 `SHOPSTREAM_ENABLE_DEMO_WRITES=true` and `SHOPSTREAM_PUBLIC_ORIGIN` to the exact

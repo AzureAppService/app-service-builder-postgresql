@@ -1,0 +1,12 @@
+{
+  "name": "database",
+  "type": "postgres",
+  "resourceId": "/subscriptions/<subscription-id>/resourceGroups/<database-group>/providers/Microsoft.DBforPostgreSQL/flexibleServers/<server>",
+  "managedIdentity": { "type": "SystemAssigned" },
+  "settings": [
+    { "field": "host", "value": "<server>.postgres.database.azure.com", "environmentVariable": "PGHOST" },
+    { "field": "database", "value": "shopstream", "environmentVariable": "PGDATABASE" },
+    { "field": "user", "value": "shopstream_runtime", "environmentVariable": "PGUSER" },
+    { "field": "port", "value": "5432", "environmentVariable": "PGPORT" }
+  ]
+}
