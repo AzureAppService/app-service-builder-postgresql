@@ -99,6 +99,9 @@ Builder activation, or deployed managed-identity connectivity. Names and
 
 ## Prerequisites
 
+[CLI and ordered ARM/Bicep setup](docs/connection-automation.md) provides a terminal alternative.
+It does not replace PostgreSQL administrator bootstrap, principal mapping or verified TLS.
+
 - Node.js **24.x** and npm, Git, Azure CLI, and its Bicep component.
 - An authorized Azure subscription/tenant, PostgreSQL provisioning rights,
   and an Entra user or group authorized to administer this dedicated database.
@@ -500,8 +503,8 @@ browser instead. Do not export session cookies or redeploy merely to finish
 sign-in.
 For CLI availability and an ETag-guarded ARM write of the same connection
 object, follow the [Connections guide](https://builder.appservice.azure.com/docs/guides/connect-to-services/).
-Installed CLI 0.0.2 has no Connections command; verify installed help before
-using the newer source command.
+The [sample-specific CLI/ARM steps](docs/connection-automation.md) require a
+native CLI release that lists `app connections` in help, or use ARM directly.
 
 For a separately approved bounded mutation test, set
 `SHOPSTREAM_ENABLE_DEMO_WRITES=true` and `SHOPSTREAM_PUBLIC_ORIGIN` to the exact
