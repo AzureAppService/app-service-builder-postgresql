@@ -7,6 +7,9 @@ That template creates the Entra-only server/database/admin; it does not create t
 
 ## Provision the source-less app
 
+The app template uses minimum 0 / maximum 2 HTTP replicas and preserves idle timeout.
+Preview requires a minimum of zero; do not disable idle timeout.
+
 Set `SUBSCRIPTION`, `RG` and a unique new `APP`.
 
 ```bash
