@@ -205,6 +205,10 @@ networking support.
 
 ## 2. Bootstrap schema and demo data as the administrator
 
+This is part of the sample's first-run happy path, not an optional runtime task.
+It fills the dashboard with real persisted synthetic products, vendors, orders and analytics
+before source deployment. Portal Connections and ARM resource creation do not create this data.
+
 ```sh
 npm ci
 export PGHOST="$PG_SERVER.postgres.database.azure.com"
@@ -230,6 +234,9 @@ it refuses to merge seed into unrelated tables. Rerunning the command returns
 “already installed” without duplicating data or overwriting orders. Do not run
 `seed.sql` directly: it relies on fresh IDs and is not independently idempotent.
 The seed is synthetic demonstration data, not a reconciled accounting ledger.
+The initial dataset contains 2,525 rows. Vendor contacts use reserved `.invalid` domains,
+and generated customer addresses use `example.com`; these are not real customers or deliveries.
+An existing empty or unknown bootstrap marker is rejected rather than treated as permission to reseed.
 
 To deliberately restore the entire synthetic dataset, stop the demo app first,
 connect as the bootstrap administrator, and explicitly confirm the database:

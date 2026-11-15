@@ -40,6 +40,9 @@ async function bootstrap(client, reset) {
       await client.query('CREATE TABLE shopstream_bootstrap (version INTEGER PRIMARY KEY, seeded_at TIMESTAMPTZ NOT NULL DEFAULT NOW())');
     }
     const marker = await client.query('SELECT version FROM shopstream_bootstrap');
+    if (exists.rows[0].marker && !marker.rows.length) {
+      throw new Error('Existing bootstrap marker has no version; refusing to modify an unverified database');
+    }
     if (marker.rows.length && (marker.rows.length !== 1 || marker.rows[0].version !== 1)) {
       throw new Error('Unsupported bootstrap version');
     }

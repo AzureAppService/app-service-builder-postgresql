@@ -5,6 +5,13 @@ Run from your fork's root; do not apply creation templates over a configured app
 Follow README sections 1–2 to deploy `infra/main.bicep`, permit only the approved network path and run administrator `db:bootstrap`.
 That template creates the Entra-only server/database/admin; it does not create the runtime database principal.
 
+Run the README's administrator-only **Bootstrap schema and demo data** step before app deployment:
+`npm run db:bootstrap` installs the schema and 2,525 fictional rows, including 500 products,
+10 vendors, 15 categories and seeded orders/reviews. This is the populated dashboard's required
+setup, not something Connections, app startup or the runtime identity performs.
+Use its transaction/advisory-lock/version-marker wrapper; never run raw `db/seed.sql`.
+Reruns preserve installed data, and unverified/non-sample databases are rejected.
+
 ## Provision the source-less app
 
 The app template uses minimum 0 / maximum 2 HTTP replicas and preserves idle timeout.

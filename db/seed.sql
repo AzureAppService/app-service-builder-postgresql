@@ -1,18 +1,18 @@
--- ShopStream Seed Data (Internal Mode)
--- ~2,000 rows for quick demo
+-- ShopStream synthetic seed data: 2,525 fictional demonstration rows.
+-- Run only through db/setup.js in an empty dedicated database.
 
 -- Vendors (10)
 INSERT INTO vendors (name, slug, email, description, logo_url, rating) VALUES
-  ('TechNova', 'technova', 'hello@technova.io', 'Premium consumer electronics and accessories', NULL, 4.7),
-  ('Urban Threads', 'urban-threads', 'info@urbanthreads.co', 'Streetwear and contemporary fashion', NULL, 4.5),
-  ('HomeHaven', 'homehaven', 'support@homehaven.com', 'Modern furniture and home decor', NULL, 4.6),
-  ('FitForge', 'fitforge', 'team@fitforge.io', 'Performance fitness equipment and gear', NULL, 4.4),
-  ('PureGlow', 'pureglow', 'care@pureglow.com', 'Clean beauty and skincare essentials', NULL, 4.8),
-  ('PageBound', 'pagebound', 'hello@pagebound.co', 'Curated books, stationery, and desk accessories', NULL, 4.3),
-  ('ByteGear', 'bytegear', 'sales@bytegear.io', 'Developer tools, peripherals, and workspace gear', NULL, 4.6),
-  ('GreenRoot', 'greenroot', 'hello@greenroot.co', 'Sustainable living products and eco-friendly goods', NULL, 4.5),
-  ('LittleLeap', 'littleleap', 'hi@littleleap.com', 'Educational toys and kids development products', NULL, 4.2),
-  ('TrailEdge', 'trailedge', 'adventure@trailedge.io', 'Outdoor adventure and camping equipment', NULL, 4.4)
+  ('TechNova', 'technova', 'hello@technova.example.invalid', 'Premium consumer electronics and accessories', NULL, 4.7),
+  ('Urban Threads', 'urban-threads', 'info@urbanthreads.example.invalid', 'Streetwear and contemporary fashion', NULL, 4.5),
+  ('HomeHaven', 'homehaven', 'support@homehaven.example.invalid', 'Modern furniture and home decor', NULL, 4.6),
+  ('FitForge', 'fitforge', 'team@fitforge.example.invalid', 'Performance fitness equipment and gear', NULL, 4.4),
+  ('PureGlow', 'pureglow', 'care@pureglow.example.invalid', 'Clean beauty and skincare essentials', NULL, 4.8),
+  ('PageBound', 'pagebound', 'hello@pagebound.example.invalid', 'Curated books, stationery, and desk accessories', NULL, 4.3),
+  ('ByteGear', 'bytegear', 'sales@bytegear.example.invalid', 'Developer tools, peripherals, and workspace gear', NULL, 4.6),
+  ('GreenRoot', 'greenroot', 'hello@greenroot.example.invalid', 'Sustainable living products and eco-friendly goods', NULL, 4.5),
+  ('LittleLeap', 'littleleap', 'hi@littleleap.example.invalid', 'Educational toys and kids development products', NULL, 4.2),
+  ('TrailEdge', 'trailedge', 'adventure@trailedge.example.invalid', 'Outdoor adventure and camping equipment', NULL, 4.4)
 ON CONFLICT DO NOTHING;
 
 -- Categories (15)
