@@ -1,0 +1,22 @@
+targetScope = 'resourceGroup'
+
+@description('Unique name for a new source-less Builder App; do not rerun over a configured app.')
+param appName string
+@allowed(['westus2'])
+param location string = 'westus2'
+
+resource app 'Microsoft.Web/builderApps@2026-09-01-preview' = {
+  name: appName
+  location: location
+  identity: { type: 'SystemAssigned' }
+  properties: {
+    scaling: {
+      components: [
+        { name: 'web', minReplicas: 0, maxReplicas: 2, httpEnabled: true }
+      ]
+    }
+  }
+}
+
+output appResourceId string = app.id
+output principalId string = app.identity.principalId

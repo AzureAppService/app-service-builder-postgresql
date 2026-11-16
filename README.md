@@ -99,6 +99,9 @@ Builder activation, or deployed managed-identity connectivity. Names and
 
 ## Prerequisites
 
+[CLI and ordered ARM/Bicep setup](docs/connection-automation.md) provides a terminal alternative.
+It does not replace PostgreSQL administrator bootstrap, principal mapping or verified TLS.
+
 - Node.js **24.x** and npm, Git, Azure CLI, and its Bicep component.
 - An authorized Azure subscription/tenant, PostgreSQL provisioning rights,
   and an Entra user or group authorized to administer this dedicated database.
@@ -202,6 +205,10 @@ networking support.
 
 ## 2. Bootstrap schema and demo data as the administrator
 
+This is part of the sample's first-run happy path, not an optional runtime task.
+It fills the dashboard with real persisted synthetic products, vendors, orders and analytics
+before source deployment. Portal Connections and ARM resource creation do not create this data.
+
 ```sh
 npm ci
 export PGHOST="$PG_SERVER.postgres.database.azure.com"
@@ -227,6 +234,9 @@ it refuses to merge seed into unrelated tables. Rerunning the command returns
 “already installed” without duplicating data or overwriting orders. Do not run
 `seed.sql` directly: it relies on fresh IDs and is not independently idempotent.
 The seed is synthetic demonstration data, not a reconciled accounting ledger.
+The initial dataset contains 2,525 rows. Vendor contacts use reserved `.invalid` domains,
+and generated customer addresses use `example.com`; these are not real customers or deliveries.
+An existing empty or unknown bootstrap marker is rejected rather than treated as permission to reseed.
 
 To deliberately restore the entire synthetic dataset, stop the demo app first,
 connect as the bootstrap administrator, and explicitly confirm the database:
@@ -263,7 +273,7 @@ work-account sign-in. In **App details**, select the same intended subscription,
 your approved sample resource group, and **West US 2** for the app. Review these
 choices before **Create and deploy**. Record the app's resource ID.
 Creating the app requests an initial deployment; it cannot pass the sample's
-SQL health check until the variables and principal grants below are in place.
+SQL health check until the connection mappings and principal grants below are in place.
 An initial missing-configuration/readiness failure is not a successful serving
 deployment. Configure and redeploy this same app; do not create a duplicate.
 
@@ -454,13 +464,22 @@ bootstrap scripts, or a privileged build-time connection. There is no static
 `output`, legacy `dependencies`, automatic database migration, or
 `startCommand` field. Never set reserved `PORT` in Builder Variables.
 
-Set these runtime variables:
+On **Connections**, add **PostgreSQL**, choose the provisioned flexible server
+and the app's system-assigned **Managed identity**, then export `PGHOST`,
+`PGDATABASE=shopstream`, `PGUSER=shopstream_runtime` and optional `PGPORT=5432`.
+Remove the optional `sslMode` mapping entirely: this sample enforces certificate
+validation in code and rejects `PGSSLMODE`, `PGPASSWORD` and `DATABASE_URL`.
+When migrating, remove the old manual `PGHOST`/`PGDATABASE`/`PGUSER`/`PGPORT`
+variables without deploying, then save the complete connection.
+[connection.json](connection.json) supplies that complete object; replace its
+resource/host placeholders. The general profile's **Password** alternative is
+not supported by this Entra-only sample; do not weaken its TLS or auth checks.
+Connections does not create the SQL principal or apply the grants above.
+
+Keep only the separate runtime controls in **Variables**:
 
 | Variable | Value |
 | --- | --- |
-| `PGHOST` | The provisioned server FQDN |
-| `PGDATABASE` | `shopstream` |
-| `PGUSER` | `shopstream_runtime`, mapped to the actual runtime identity |
 | `ENTRA_CREDENTIAL` | `managed-identity` (also the default) |
 | `AZURE_CLIENT_ID` | Unset for system-assigned; client ID for user-assigned |
 | `SHOPSTREAM_ENABLE_DEMO_WRITES` | Unset/false initially; true only for a bounded trusted demo |
@@ -478,7 +497,7 @@ For tester-only validation, enforce Builder's required Entra visitor policy
 before enabling writes. Review any sign-in or application-consent prompt
 personally; database managed identity does not replace visitor access control.
 
-Use the app's **Variables** page, then choose **Save and deploy** to capture variables in a new version. **Save only**
+Save both Connections and the separate variables, then deploy the complete desired configuration once. **Save only**
 does not update running code. Retained versions use historical settings. Wait
 for successful deployment and inspect the active version's exact GitHub source
 revision. Open **Overview → Browse**, sign in as an allowed tester, and check
@@ -489,6 +508,10 @@ request is denied with 401. A protected health endpoint returning 401 to an
 anonymous client is not a database failure; check it in the authenticated
 browser instead. Do not export session cookies or redeploy merely to finish
 sign-in.
+For CLI availability and an ETag-guarded ARM write of the same connection
+object, follow the [Connections guide](https://builder.appservice.azure.com/docs/guides/connect-to-services/).
+The [sample-specific CLI/ARM steps](docs/connection-automation.md) require a
+native CLI release that lists `app connections` in help, or use ARM directly.
 
 For a separately approved bounded mutation test, set
 `SHOPSTREAM_ENABLE_DEMO_WRITES=true` and `SHOPSTREAM_PUBLIC_ORIGIN` to the exact

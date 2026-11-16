@@ -29,6 +29,21 @@ test('bootstrap refuses to merge seed into an existing non-sample database', asy
   assert.equal(statements.at(-1), 'ROLLBACK');
 });
 
+test('an empty existing marker cannot cause duplicate seeding or authorize a reset', async () => {
+  for (const reset of [false, true]) {
+    const statements = [];
+    await assert.rejects(bootstrap({
+      async query(statement) {
+        statements.push(statement);
+        if (statement.includes('to_regclass')) return { rows: [{ marker: 'shopstream_bootstrap' }] };
+        return { rows: [] };
+      },
+    }, reset), /no version/);
+    assert.equal(statements.at(-1), 'ROLLBACK');
+    assert.equal(statements.some(sql => /TRUNCATE|INSERT|DELETE/.test(sql)), false);
+  }
+});
+
 test('bootstrap and reset refuse unknown schema versions before changing data', async () => {
   for (const reset of [false, true]) {
     const statements = [];
